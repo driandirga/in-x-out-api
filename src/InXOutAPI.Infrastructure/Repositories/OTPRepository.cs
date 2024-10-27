@@ -20,7 +20,7 @@ namespace InXOutAPI.Infrastructure.Repositories
         private readonly IUserRepository _userRepository = userRepository;
         private const int OTP_LENGTH = 5;
         private const int OTP_EXPIRATION = 1;
-        private const string SECRET_KEY = "my_super_deep_salt_secret_key_1234567!";
+        private const string SECRET_KEY = "my_super_deep_salt_secret_key_12345678!";
 
         public string GenerateOTPToken(string otp)
         {
