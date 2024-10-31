@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace InXOutAPI.Domain.Entities
 {
+    [Table("otps")]
     public class OTP
     {
         [Key]
-        [Column("Id")]
+        [Column("id")]
         public int Id { get; set; }
 
         [Column("user_id")]

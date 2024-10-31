@@ -35,10 +35,10 @@ namespace InXOutAPI.Infrastructure.Repositories
                 };
 
                 var token = new JwtSecurityToken(
-                    issuer: "MrsPOS",
-                    audience: "MrsPOS",
+                    issuer: "InXOut",
+                    audience: "InXOut",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(OTP_EXPIRATION),
+                    expires: DateTime.Now.ToUniversalTime().AddMinutes(OTP_EXPIRATION),
                     signingCredentials: credentials);
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
@@ -50,12 +50,12 @@ namespace InXOutAPI.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> ValidateOTPToken(string inputOtp, string identifier)
+        public async Task<bool> ValidateOTPToken(string identifier, string inputOtp)
         {
             try
             {
                 var user = await _userRepository.GetUserByIdentifier(identifier);
-                var otpEntry = _context.OTPs.FirstOrDefault(o => o.UserId == user.Id && o.Code != null && o.ExpirationTime > DateTime.Now)
+                var otpEntry = _context.OTPs.FirstOrDefault(o => o.UserId == user.Id && o.Code != null && o.ExpirationTime > DateTime.Now.ToUniversalTime())
                                ?? throw new ArgumentException("OTP not found.");
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SECRET_KEY));
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -65,8 +65,8 @@ namespace InXOutAPI.Infrastructure.Repositories
                     ValidateAudience = true,
                     ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "MrsPOS",
-                    ValidAudience = "MrsPOS",
+                    ValidIssuer = "InXOut",
+                    ValidAudience = "InXOut",
                     IssuerSigningKey = key
                 };
 
@@ -94,11 +94,11 @@ namespace InXOutAPI.Infrastructure.Repositories
                 var user = await _userRepository.GetUserByIdentifier(identifier);
                 var userId = user.Id;
 
-                var existingOtp = _context.OTPs.FirstOrDefault(o => o.UserId == userId && o.Code != null && o.ExpirationTime > DateTime.Now);
+                var existingOtp = _context.OTPs.FirstOrDefault(o => o.UserId == userId && o.Code != null && o.ExpirationTime > DateTime.Now.ToUniversalTime());
                 if (existingOtp != null)
                 {
                     existingOtp.Code = otpToken;
-                    existingOtp.ExpirationTime = DateTime.Now.AddMinutes(OTP_EXPIRATION);
+                    existingOtp.ExpirationTime = DateTime.Now.ToUniversalTime().AddMinutes(OTP_EXPIRATION);
                     await _context.SaveChangesAsync();
                     return existingOtp;
                 }
@@ -107,8 +107,8 @@ namespace InXOutAPI.Infrastructure.Repositories
                 {
                     UserId = userId,
                     Code = otpToken,
-                    ExpirationTime = DateTime.Now.AddMinutes(OTP_EXPIRATION),
-                    CreatedAt = DateTime.Now
+                    ExpirationTime = DateTime.Now.ToUniversalTime().AddMinutes(OTP_EXPIRATION),
+                    CreatedAt = DateTime.Now.ToUniversalTime()
                 };
 
                 _context.OTPs.Add(otp);

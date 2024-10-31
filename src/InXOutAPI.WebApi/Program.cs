@@ -12,6 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOTPRepository, OTPRepository>();
 builder.Services.AddScoped<IAuthUseCase, AuthUseCase>();
 
 builder.Services.AddControllers();

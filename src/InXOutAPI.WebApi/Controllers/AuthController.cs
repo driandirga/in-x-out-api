@@ -31,7 +31,53 @@ namespace InXOutAPI.WebApi.Controllers
             try
             {
                 await _authUseCase.RegisterAsync(request.Email!, request.Password!, request.ConfirmPassword!);
+
                 return Ok(new { message = "Registration successful" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("create-new-password")]
+        public async Task<IActionResult> CreateNewPassword([FromBody] CreateNewPasswordRequest request)
+        {
+            try
+            {
+                await _authUseCase.CreateNewPasswordAsync(request.Email!, request.Password!, request.ConfirmPassword!);
+
+                return Ok(new { message = "Password updated successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("send-otp-email")]
+        public async Task<IActionResult> SendOtpEmail([FromBody] SendOtpEmailRequest request)
+        {
+            try
+            {
+                bool isSent = await _authUseCase.SendOtpEmailAsync(request.Email!);
+
+                return Ok(new { message = isSent ? "OTP sent successfully" : "Failed to send OTP" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("validate-otp-token")]
+        public async Task<IActionResult> ValidateOtpToken([FromBody] ValidateOtpTokenRequest request)
+        {
+            try
+            {
+                bool isValid = await _authUseCase.ValidateOtpTokenAsync(request.Email!, request.OTP!);
+
+                return Ok(new { message = isValid ? "OTP is valid" : "OTP is invalid" });
             }
             catch (ArgumentException ex)
             {

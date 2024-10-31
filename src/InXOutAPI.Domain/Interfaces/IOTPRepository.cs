@@ -9,7 +9,7 @@ namespace InXOutAPI.Domain.Interfaces
     public interface IOTPRepository
     {
         string GenerateOTPToken(string otp);
-        Task<bool> ValidateOTPToken(string otp, string identifier);
+        Task<bool> ValidateOTPToken(string identifier, string otp);
         Task<bool> SendOtpEmail(string email);
     }
 }

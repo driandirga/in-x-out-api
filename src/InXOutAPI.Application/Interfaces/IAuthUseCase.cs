@@ -11,5 +11,8 @@ namespace InXOutAPI.Application.Interfaces
     {
         Task<User?> LoginAsync(string email, string password);
         Task RegisterAsync(string email, string password, string confirmPassword);
+        Task CreateNewPasswordAsync(string email, string password, string confirmPassword);
+        Task<bool> SendOtpEmailAsync(string email);
+        Task<bool> ValidateOtpTokenAsync(string email, string otp);
     }
 }
